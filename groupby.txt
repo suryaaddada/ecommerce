@@ -1,0 +1,34 @@
+ const groupProductsByBrand = () => {
+        const groupedProducts = {};
+        products.forEach(product => {
+            if (!groupedProducts[product.brandName]) {
+                groupedProducts[product.brandName] = [];
+            }
+            
+            // Create a unique key combining id and size
+            const key = `${product.id}-${product.productSize}`;
+            
+            if (!groupedProducts[product.brandName][key]) {
+                // Initialize product object with an array of sizes
+                groupedProducts[product.brandName][key] = {
+                    id: product.id,
+                    brandName: product.brandName,
+                    image: product.image,
+                    description: product.description,
+                    sizes: [],
+                };
+            }
+            
+            // Add size to sizes array
+            groupedProducts[product.brandName][key].sizes.push(product.productSize);
+            
+            // Add stock and price for each size
+            groupedProducts[product.brandName][key][product.productSize] = {
+                stock: product.stock,
+                price: product.price
+            };
+        });
+        console.log(groupedProducts);
+        // Convert object into array of objects
+        return Object.values(groupedProducts).map(products => Object.values(products));
+    };

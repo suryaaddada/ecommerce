@@ -1,0 +1,61 @@
+
+
+import React, { useEffect, useState } from 'react';
+import Modal from '@mui/material/Modal';
+import Backdrop from '@mui/material/Backdrop';
+import Typography from '@mui/material/Typography';
+import { makeStyles } from '@mui/styles';
+
+const useStyles = makeStyles((theme) => ({
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  messageContainer: {
+    backgroundColor: '#fff', // Default background color
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+    borderRadius: '8px',
+    textAlign: 'center',
+  },
+}));
+
+export const MyComponent=()=> {
+  const classes = useStyles();
+  const [open, setOpen] = useState(false); 
+  const[user,setUser]=useState({isapproved:false})
+
+  useEffect(() => {
+    const ApprovedVendor = () => {
+      if (user && user.isapproved === false) { // Check if user is not undefined
+        setOpen(true);
+      }
+    }
+
+    ApprovedVendor();
+  }, [user]);
+
+  return (
+    <div>
+      {/* Your component JSX */}
+
+      <Modal
+        className={classes.modal}
+        open={open}
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          invisible: true, // Prevent closing by clicking outside the modal
+          style: { backgroundColor: 'rgba(0, 0, 0, 0.5)' }, // Adjust backdrop style
+        }}
+        onClose={() => setOpen(false)} // Allow closing the modal by clicking close button
+      >
+        <div className={classes.messageContainer}>
+          <Typography variant="h5" gutterBottom>
+            You are not approved yet.
+          </Typography>
+        </div>
+      </Modal>
+    </div>
+  );
+}

@@ -1,0 +1,34 @@
+import { useNavigate, useLocation } from "react-router-dom";
+
+export const Signup = () => {
+    const location = useLocation();
+    const navigate = useNavigate(); 
+
+    const handleClick = (name) => {
+        navigate("/nav", { state: { name } }); 
+    }
+
+    return (
+        <>
+            <button type="submit" onClick={() => handleClick("surya")}>Hello</button>
+        </>
+    );
+}
+
+
+
+
+import { useLocation } from "react-router-dom";
+
+export const Nav = () => {
+    const location = useLocation();
+    const { response } = location.state 
+
+    
+
+    return (
+        <>
+            <h1>Welcome {response.id}</h1>
+        </>
+    );
+}

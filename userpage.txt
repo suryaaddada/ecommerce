@@ -1,0 +1,99 @@
+import React, { useEffect, useState } from "react";
+import Chip from '@mui/material/Chip'; 
+import {CgArrowLeft} from "react-icons/cg"
+
+export const UserPage = () => {
+    const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedSubCategory, setSelectedSubCategory] = useState("");
+    const [subCategories, setSubCategories] = useState([]);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            const data = await fetch(`https://localhost:7199/api/Product/GetAllProducts`);
+            if (data.ok) {
+                const response = await data.json();
+                setProducts(response);
+                const uniqueCategories = [...new Set(response.map(product => product.category))];
+                setCategories(uniqueCategories);
+            }
+        }
+        fetchProducts();
+    }, []);
+
+    useEffect(() => {
+        if (selectedCategory) {
+            const filteredSubCategories = [...new Set(products
+                .filter(product => product.category === selectedCategory)
+                .map(product => product.subCategory))];
+            setSubCategories(filteredSubCategories);
+        } else {
+            setSubCategories([]);
+        }
+        setSelectedSubCategory(""); 
+    }, [selectedCategory, products]);
+
+    const handleCategoryChange = (category) => {
+        setSelectedCategory(category);
+    }
+
+    const handleSubCategoryChange = (subCategory) => {
+        setSelectedSubCategory(subCategory);
+    }
+
+    return (
+        <div style={{ paddingTop: 50 }}>
+            {!selectedCategory && (
+                <div>
+                    <h2>Categories:</h2>
+                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                        {categories.map(category => (
+                            <Chip
+                                key={category}
+                                label={category}
+                                onClick={() => handleCategoryChange(category)}
+                                style={{ margin: 5, borderRadius: '50%', backgroundColor: 'lightblue', cursor: 'pointer' }}
+                            />
+                        ))}
+                    </div>
+                </div>
+            )}
+            {selectedCategory && !selectedSubCategory && (
+                <div>
+                    <h2>Sub Categories in {selectedCategory}:</h2> 
+                    <button onClick={()=>setSelectedCategory("")}><CgArrowLeft/></button>
+                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                        {subCategories.map(subCategory => (
+                            <Chip
+                                key={subCategory}
+                                label={subCategory}
+                                onClick={() => handleSubCategoryChange(subCategory)}
+                                style={{ margin: 5, borderRadius: '50%', backgroundColor: 'lightgreen', cursor: 'pointer' }}
+                            />
+                        ))}
+                    </div>
+                </div>
+            )}
+            {selectedSubCategory && (
+                <div>
+                    <h2>Products in {selectedSubCategory}:</h2> 
+                    <button onClick={()=>setSelectedSubCategory("")}><CgArrowLeft/></button>
+                    <ul>
+                        {products
+                            .filter(product => product.subCategory === selectedSubCategory)
+                            .map(product => (
+                                <li key={product.id}>
+                                    <div>
+                                        <img src={product.image} alt={product.description} style={{ width: 100 }} />
+                                        <p>{product.brandName}</p>
+                                        <p>{product.description}</p>
+                                    </div>
+                                </li>
+                            ))}
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
+}
